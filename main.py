@@ -1,8 +1,12 @@
 import os
+from tkinter import messagebox
+import qrcode
 from PIL import Image
 import customtkinter
 from tkinter.filedialog import asksaveasfile
 from tkinter.colorchooser import askcolor
+import base64
+from io import BytesIO
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -23,11 +27,68 @@ class App(customtkinter.CTk):
         self.entry = customtkinter.CTkEntry(self, placeholder_text="Please enter text")
         self.entry.grid(row=0, column=0, columnspan=4, padx=(10, 10), pady=(10, 10), sticky="nsew")
 
+        # load images with light and dark mode image
+        image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "images")
+
+        self.large_test_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "empty.png")),
+                                                       size=(400, 400))
+
+        self.home_frame_large_image_label = customtkinter.CTkLabel(self, text="",
+                                                                   image=self.large_test_image)
+        self.home_frame_large_image_label.grid(row=5, column=1, columnspan=2, padx=(10, 10), pady=(10, 10),
+                                               sticky="nsew")
+
+        self.generatedImageData = Image.new(mode = "RGB", size = (200, 200))
+
         def generate_qr_code():
+
             print("generate")
 
+            if (self.entry.get() != "") :
+
+                qr = qrcode.QRCode(
+                    version=2,
+                    error_correction=qrcode.constants.ERROR_CORRECT_H,
+                    box_size=20,
+                    border=1
+                )
+
+                qr.add_data(self.entry.get())
+
+                qr.make()
+
+                self.generatedImageData = qr.make_image(fill_color="black", back_color="white")
+
+                buffer = BytesIO()
+                self.generatedImageData.save(buffer, 'jpeg')
+                buffer.seek(0)
+
+                bg_image = buffer
+
+                base64_bytes = base64.b64encode(bg_image.getvalue())
+
+                new_img = Image.open(BytesIO(base64.b64decode(base64_bytes)))
+
+                ctkImage = customtkinter.CTkImage(new_img, size=(400, 400))
+
+                self.home_frame_large_image_label.configure(image=ctkImage)
+
+                self.save_qr_code_btn.configure(state="normal")
+
+            else:
+                print("Please enter a text")
+                messagebox.showwarning("Warning", "Please enter a text")
+
         def save_qr_code():
+
             print("save")
+
+            f = asksaveasfile(initialfile= str(self.entry.get()) + '.png', mode='w',
+                              defaultextension=".png", filetypes=[("PNG File", "*.png")])
+            if f:
+                abs_path = os.path.abspath(f.name)
+
+                self.generatedImageData.save(abs_path)
 
         self.generate_qr_code_btn = customtkinter.CTkButton(master=self, text="Generate QR Code", fg_color="transparent",
                                                             border_width=2, text_color=("gray10", "#DCE4EE"),
@@ -37,7 +98,7 @@ class App(customtkinter.CTk):
 
         self.save_qr_code_btn = customtkinter.CTkButton(master=self, text="Save QR Code", fg_color="transparent",
                                                      border_width=2, text_color=("gray10", "#DCE4EE"),
-                                                     command=save_qr_code)
+                                                     command=save_qr_code, state="disabled")
 
         self.save_qr_code_btn.grid(row=1, column=2, padx=(10, 10), pady=(10, 10), sticky="nsew", columnspan=2)
 
@@ -116,20 +177,6 @@ class App(customtkinter.CTk):
 
         self.back_color_pick_frame.bind('<Button-1>', back_color_pick)
         self.back_color_pick_frame.grid(row=4, column=4, padx=(10, 10), pady=(10, 10), sticky="nsew")
-
-        # load images with light and dark mode image
-        image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "images")
-
-        self.large_test_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "empty.png")),
-                                                       size=(400, 400))
-
-        self.home_frame_large_image_label = customtkinter.CTkLabel(self, text="",
-                                                                   image=self.large_test_image)
-        self.home_frame_large_image_label.grid(row=5, column=1, columnspan=2, padx=(10, 10), pady=(10, 10), sticky="nsew")
-
-    def save_qr_code(self):
-        f = asksaveasfile(initialfile='Untitled.txt',
-                          defaultextension=".txt", filetypes=[("All Files", "*.*"), ("Text Documents", "*.txt")])
 
 if __name__ == "__main__":
     app = App()
