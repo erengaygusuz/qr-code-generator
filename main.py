@@ -8,12 +8,17 @@ from tkinter.colorchooser import askcolor
 import base64
 from io import BytesIO
 
-customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
-customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
+customtkinter.set_appearance_mode("System")
+customtkinter.set_default_color_theme("blue")
 
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
+
+        self.error_correction_mode_value = ""
+        self.border_value = ""
+        self.fill_color_value = ("black")
+        self.back_color_value = ("white")
 
         # configure window
         self.title("QR Code Generator")
@@ -48,7 +53,7 @@ class App(customtkinter.CTk):
 
                 qr = qrcode.QRCode(
                     version=2,
-                    error_correction=qrcode.constants.ERROR_CORRECT_H,
+                    error_correction=qrcode.constants.ERROR_CORRECT_Q,
                     box_size=20,
                     border=1
                 )
@@ -57,7 +62,8 @@ class App(customtkinter.CTk):
 
                 qr.make()
 
-                self.generatedImageData = qr.make_image(fill_color="black", back_color="white")
+                self.generatedImageData = qr.make_image(fill_color=self.fill_color_value,
+                                                        back_color=self.back_color_value)
 
                 buffer = BytesIO()
                 self.generatedImageData.save(buffer, 'jpeg')
@@ -111,8 +117,8 @@ class App(customtkinter.CTk):
 
         self.error_correction_mode_combobox = customtkinter.CTkComboBox(self.error_correction_mode_frame,
                                                                         width=160,
-                                                                        values=["ERROR_CORRECT_L",
-                                                                                "ERROR_CORRECT_M",
+                                                                        values=["ERROR_CORRECT_M",
+                                                                                "ERROR_CORRECT_L",
                                                                                 "ERROR_CORRECT_Q",
                                                                                 "ERROR_CORRECT_H"])
         self.error_correction_mode_combobox.grid(row=4, column=0, pady=10, padx=20)
@@ -160,20 +166,24 @@ class App(customtkinter.CTk):
 
         # fill color pick frame
         self.fill_color_pick_frame = customtkinter.CTkFrame(master=self.color_frame, width=100, height=25)
+        self.fill_color_pick_frame.configure(fg_color=("black"))
 
         def fill_color_pick(event):
             colors = askcolor(title="Choose Fill Color")
             self.fill_color_pick_frame.configure(fg_color=colors[1])
+            self.fill_color_value=colors[1]
 
         self.fill_color_pick_frame.bind('<Button-1>', fill_color_pick)
         self.fill_color_pick_frame.grid(row=3, column=4, padx=(10, 10), pady=(10, 10), sticky="nsew")
 
         # back color pick frame
         self.back_color_pick_frame = customtkinter.CTkFrame(master=self.color_frame, width=100, height=25)
+        self.back_color_pick_frame.configure(fg_color=("white"))
 
         def back_color_pick(event):
             colors = askcolor(title="Choose Back Color")
             self.back_color_pick_frame.configure(fg_color=colors[1])
+            self.back_color_value = colors[1]
 
         self.back_color_pick_frame.bind('<Button-1>', back_color_pick)
         self.back_color_pick_frame.grid(row=4, column=4, padx=(10, 10), pady=(10, 10), sticky="nsew")
