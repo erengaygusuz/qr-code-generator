@@ -15,8 +15,8 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
-        self.error_correction_mode_value = ""
-        self.border_value = ""
+        self.error_correction_mode_value = 0
+        self.border_value = 1
         self.fill_color_value = ("black")
         self.back_color_value = ("white")
 
@@ -53,9 +53,9 @@ class App(customtkinter.CTk):
 
                 qr = qrcode.QRCode(
                     version=2,
-                    error_correction=qrcode.constants.ERROR_CORRECT_Q,
+                    error_correction=self.error_correction_mode_value,
                     box_size=20,
-                    border=1
+                    border=self.border_value
                 )
 
                 qr.add_data(self.entry.get())
@@ -96,6 +96,20 @@ class App(customtkinter.CTk):
 
                 self.generatedImageData.save(abs_path)
 
+        def error_correction_mode_combobox_callback(choice):
+
+            if choice == "ERROR_CORRECT_M":
+                self.error_correction_mode_value = 0
+            elif choice == "ERROR_CORRECT_L":
+                self.error_correction_mode_value = 1
+            elif choice == "ERROR_CORRECT_Q":
+                self.error_correction_mode_value = 2
+            else:
+                self.error_correction_mode_value = 3
+
+        def border_combobox_callback(choice):
+            self.border_value = choice
+
         self.generate_qr_code_btn = customtkinter.CTkButton(master=self, text="Generate QR Code", fg_color="transparent",
                                                             border_width=2, text_color=("gray10", "#DCE4EE"),
                                                             command=generate_qr_code)
@@ -120,7 +134,8 @@ class App(customtkinter.CTk):
                                                                         values=["ERROR_CORRECT_M",
                                                                                 "ERROR_CORRECT_L",
                                                                                 "ERROR_CORRECT_Q",
-                                                                                "ERROR_CORRECT_H"])
+                                                                                "ERROR_CORRECT_H"],
+                                                                        command=error_correction_mode_combobox_callback)
         self.error_correction_mode_combobox.grid(row=4, column=0, pady=10, padx=20)
 
         # box size
@@ -146,10 +161,12 @@ class App(customtkinter.CTk):
 
         self.border_combobox = customtkinter.CTkComboBox(self.border_frame,
                                                            width=160,
-                                                           values=["4",
+                                                           values=["1",
+                                                                   "4",
                                                                    "8",
                                                                    "12",
-                                                                   "16"])
+                                                                   "16"],
+                                                           command=border_combobox_callback)
         self.border_combobox.grid(row=4, column=2, pady=10, padx=20)
 
         # color main frame
