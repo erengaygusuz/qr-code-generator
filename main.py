@@ -1,4 +1,5 @@
 import os
+import tkinter
 from tkinter import messagebox
 import qrcode
 from PIL import Image
@@ -16,13 +17,13 @@ class App(customtkinter.CTk):
         super().__init__()
 
         self.error_correction_mode_value = 0
-        self.border_value = 1
         self.fill_color_value = ("black")
         self.back_color_value = ("white")
+        self.box_size_value = 4
 
         # configure window
         self.title("QR Code Generator")
-        self.geometry(f"{885}x{650}")
+        self.geometry(f"{670}x{650}")
 
         # configure grid layout (4x4)
         self.grid_columnconfigure((0, 1, 2, 3), weight=0)
@@ -40,8 +41,7 @@ class App(customtkinter.CTk):
 
         self.home_frame_large_image_label = customtkinter.CTkLabel(self, text="",
                                                                    image=self.large_test_image)
-        self.home_frame_large_image_label.grid(row=5, column=1, columnspan=2, padx=(10, 10), pady=(10, 10),
-                                               sticky="nsew")
+        self.home_frame_large_image_label.place(relx=0.5, rely=0.655, anchor=tkinter.CENTER)
 
         self.generatedImageData = Image.new(mode = "RGB", size = (200, 200))
 
@@ -52,10 +52,10 @@ class App(customtkinter.CTk):
             if (self.entry.get() != "") :
 
                 qr = qrcode.QRCode(
-                    version=2,
+                    version=1,
                     error_correction=self.error_correction_mode_value,
-                    box_size=20,
-                    border=self.border_value
+                    box_size=self.box_size_value,
+                    border=2
                 )
 
                 qr.add_data(self.entry.get())
@@ -110,6 +110,14 @@ class App(customtkinter.CTk):
         def border_combobox_callback(choice):
             self.border_value = choice
 
+        def box_size_combobox_callback(choice):
+            if choice == "100x100":
+                self.box_size_value = 4
+            elif choice == "250x250":
+                self.box_size_value = 10
+            else:
+                self.box_size_value = 20
+
         self.generate_qr_code_btn = customtkinter.CTkButton(master=self, text="Generate QR Code", fg_color="transparent",
                                                             border_width=2, text_color=("gray10", "#DCE4EE"),
                                                             command=generate_qr_code)
@@ -149,37 +157,21 @@ class App(customtkinter.CTk):
                                                                         width=160,
                                                                         values=["100x100",
                                                                                 "250x250",
-                                                                                "500x500"])
+                                                                                "500x500"],
+                                                                        command=box_size_combobox_callback)
         self.box_size_combobox.grid(row=4, column=1, pady=10, padx=20)
-
-        # border
-        self.border_frame = customtkinter.CTkFrame(self)
-        self.border_frame.grid(row=2, column=2, padx=(10, 10), pady=(10, 10), sticky="nsew")
-
-        self.border_label = customtkinter.CTkLabel(master=self.border_frame, text="Border:")
-        self.border_label.grid(row=3, column=2, padx=10, pady=10, sticky="")
-
-        self.border_combobox = customtkinter.CTkComboBox(self.border_frame,
-                                                           width=160,
-                                                           values=["1",
-                                                                   "4",
-                                                                   "8",
-                                                                   "12",
-                                                                   "16"],
-                                                           command=border_combobox_callback)
-        self.border_combobox.grid(row=4, column=2, pady=10, padx=20)
 
         # color main frame
         self.color_frame = customtkinter.CTkFrame(self)
-        self.color_frame.grid(row=2, column=3, padx=(10, 10), pady=(10, 10), sticky="nsew")
+        self.color_frame.grid(row=2, column=2, padx=(10, 10), pady=(10, 10), sticky="nsew", columnspan=2)
 
         # fill color label
         self.fill_color_label = customtkinter.CTkLabel(master=self.color_frame, text="Fill Color:")
-        self.fill_color_label.grid(row=3, column=3, padx=10, pady=10, sticky="")
+        self.fill_color_label.grid(row=3, column=2, padx=10, pady=10, sticky="")
 
         # back color label
         self.back_color_label = customtkinter.CTkLabel(master=self.color_frame, text="Back Color:")
-        self.back_color_label.grid(row=4, column=3, padx=10, pady=10, sticky="")
+        self.back_color_label.grid(row=4, column=2, padx=10, pady=10, sticky="")
 
         # fill color pick frame
         self.fill_color_pick_frame = customtkinter.CTkFrame(master=self.color_frame, width=100, height=25)
@@ -191,7 +183,7 @@ class App(customtkinter.CTk):
             self.fill_color_value=colors[1]
 
         self.fill_color_pick_frame.bind('<Button-1>', fill_color_pick)
-        self.fill_color_pick_frame.grid(row=3, column=4, padx=(10, 10), pady=(10, 10), sticky="nsew")
+        self.fill_color_pick_frame.grid(row=3, column=3, padx=(10, 10), pady=(10, 10), sticky="nsew")
 
         # back color pick frame
         self.back_color_pick_frame = customtkinter.CTkFrame(master=self.color_frame, width=100, height=25)
@@ -203,7 +195,7 @@ class App(customtkinter.CTk):
             self.back_color_value = colors[1]
 
         self.back_color_pick_frame.bind('<Button-1>', back_color_pick)
-        self.back_color_pick_frame.grid(row=4, column=4, padx=(10, 10), pady=(10, 10), sticky="nsew")
+        self.back_color_pick_frame.grid(row=4, column=3, padx=(10, 10), pady=(10, 10), sticky="nsew")
 
 if __name__ == "__main__":
     app = App()
