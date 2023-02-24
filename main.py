@@ -1,13 +1,13 @@
 import os
-import tkinter
-from tkinter import messagebox
 import qrcode
-from PIL import Image
-import customtkinter
-from tkinter.filedialog import asksaveasfile
-from tkinter.colorchooser import askcolor
 import base64
 from io import BytesIO
+from PIL import Image
+import customtkinter
+from tkinter import constants
+from tkinter import messagebox
+from tkinter.filedialog import asksaveasfile
+from tkinter.colorchooser import askcolor
 
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
@@ -37,7 +37,7 @@ class App(customtkinter.CTk):
 
         self.image_label = customtkinter.CTkLabel(self, text="",
                                                                    image=self.empty_image)
-        self.image_label.place(relx=0.5, rely=0.655, anchor=tkinter.CENTER)
+        self.image_label.place(relx=0.5, rely=0.655, anchor=constants.CENTER)
 
         self.generatedImageData = Image.new(mode = "RGB", size = (200, 200))
 
