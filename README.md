@@ -31,7 +31,7 @@ You can see a picture about this at below.
 ## How to Use
 
 * When you run the code, a window will appear.
-* You should at least a character text.
+* You should enter at least one character.
 * You can set three options. Error Correction Mode, Box Size and Colors.
 * Set your options and then click the Generate button.
 * QR Code will be displayed.
