@@ -20,6 +20,7 @@ class App(customtkinter.CTk):
         self.fill_color_value = ("black")
         self.back_color_value = ("white")
         self.box_size_value = 4
+        self.resizeTuple = (100, 100)
 
         self.title("QR Code Generator")
         self.geometry(f"{670}x{650}")
@@ -40,6 +41,8 @@ class App(customtkinter.CTk):
         self.image_label.place(relx=0.5, rely=0.655, anchor=constants.CENTER)
 
         self.generatedImageData = Image.new(mode = "RGB", size = (200, 200))
+
+        self.resized = Image.new(mode = "RGB", size = (200, 200))
 
         def generate_qr_code():
 
@@ -69,6 +72,8 @@ class App(customtkinter.CTk):
 
                 new_img = Image.open(BytesIO(base64.b64decode(base64_bytes)))
 
+                self.resized = new_img.resize(self.resizeTuple)
+
                 ctkImage = customtkinter.CTkImage(new_img, size=(400, 400))
 
                 self.image_label.configure(image=ctkImage)
@@ -85,7 +90,7 @@ class App(customtkinter.CTk):
             if f:
                 abs_path = os.path.abspath(f.name)
 
-                self.generatedImageData.save(abs_path)
+                self.resized.save(abs_path)
 
         def error_correction_mode_combobox_callback(choice):
 
@@ -101,10 +106,13 @@ class App(customtkinter.CTk):
         def box_size_combobox_callback(choice):
             if choice == "100x100":
                 self.box_size_value = 4
+                self.resizeTuple = (100, 100)
             elif choice == "250x250":
                 self.box_size_value = 10
+                self.resizeTuple = (250, 250)
             else:
                 self.box_size_value = 20
+                self.resizeTuple = (500, 500)
 
         self.generate_qr_code_btn = customtkinter.CTkButton(master=self, text="Generate QR Code", fg_color="transparent",
                                                             border_width=2, text_color=("gray10", "#DCE4EE"),
