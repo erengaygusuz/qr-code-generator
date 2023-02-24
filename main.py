@@ -21,33 +21,27 @@ class App(customtkinter.CTk):
         self.back_color_value = ("white")
         self.box_size_value = 4
 
-        # configure window
         self.title("QR Code Generator")
         self.geometry(f"{670}x{650}")
 
-        # configure grid layout (4x4)
         self.grid_columnconfigure((0, 1, 2, 3), weight=0)
         self.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=0)
 
-        # create main entry and button
         self.entry = customtkinter.CTkEntry(self, placeholder_text="Please enter text")
         self.entry.grid(row=0, column=0, columnspan=4, padx=(10, 10), pady=(10, 10), sticky="nsew")
 
-        # load images with light and dark mode image
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "images")
 
-        self.large_test_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "empty.png")),
+        self.empty_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "empty.png")),
                                                        size=(400, 400))
 
-        self.home_frame_large_image_label = customtkinter.CTkLabel(self, text="",
-                                                                   image=self.large_test_image)
-        self.home_frame_large_image_label.place(relx=0.5, rely=0.655, anchor=tkinter.CENTER)
+        self.image_label = customtkinter.CTkLabel(self, text="",
+                                                                   image=self.empty_image)
+        self.image_label.place(relx=0.5, rely=0.655, anchor=tkinter.CENTER)
 
         self.generatedImageData = Image.new(mode = "RGB", size = (200, 200))
 
         def generate_qr_code():
-
-            print("generate")
 
             if (self.entry.get() != "") :
 
@@ -77,17 +71,14 @@ class App(customtkinter.CTk):
 
                 ctkImage = customtkinter.CTkImage(new_img, size=(400, 400))
 
-                self.home_frame_large_image_label.configure(image=ctkImage)
+                self.image_label.configure(image=ctkImage)
 
                 self.save_qr_code_btn.configure(state="normal")
 
             else:
-                print("Please enter a text")
                 messagebox.showwarning("Warning", "Please enter a text")
 
         def save_qr_code():
-
-            print("save")
 
             f = asksaveasfile(initialfile= str(self.entry.get()) + '.png', mode='w',
                               defaultextension=".png", filetypes=[("PNG File", "*.png")])
@@ -106,9 +97,6 @@ class App(customtkinter.CTk):
                 self.error_correction_mode_value = 2
             else:
                 self.error_correction_mode_value = 3
-
-        def border_combobox_callback(choice):
-            self.border_value = choice
 
         def box_size_combobox_callback(choice):
             if choice == "100x100":
@@ -130,7 +118,6 @@ class App(customtkinter.CTk):
 
         self.save_qr_code_btn.grid(row=1, column=2, padx=(10, 10), pady=(10, 10), sticky="nsew", columnspan=2)
 
-        # error correction mode
         self.error_correction_mode_frame = customtkinter.CTkFrame(self)
         self.error_correction_mode_frame.grid(row=2, column=0, padx=(10, 10), pady=(10, 10), sticky="nsew")
 
@@ -146,7 +133,6 @@ class App(customtkinter.CTk):
                                                                         command=error_correction_mode_combobox_callback)
         self.error_correction_mode_combobox.grid(row=4, column=0, pady=10, padx=20)
 
-        # box size
         self.box_size_frame = customtkinter.CTkFrame(self)
         self.box_size_frame.grid(row=2, column=1, padx=(10, 10), pady=(10, 10), sticky="nsew")
 
@@ -161,19 +147,15 @@ class App(customtkinter.CTk):
                                                                         command=box_size_combobox_callback)
         self.box_size_combobox.grid(row=4, column=1, pady=10, padx=20)
 
-        # color main frame
         self.color_frame = customtkinter.CTkFrame(self)
         self.color_frame.grid(row=2, column=2, padx=(10, 10), pady=(10, 10), sticky="nsew", columnspan=2)
 
-        # fill color label
         self.fill_color_label = customtkinter.CTkLabel(master=self.color_frame, text="Fill Color:")
         self.fill_color_label.grid(row=3, column=2, padx=10, pady=10, sticky="")
 
-        # back color label
         self.back_color_label = customtkinter.CTkLabel(master=self.color_frame, text="Back Color:")
         self.back_color_label.grid(row=4, column=2, padx=10, pady=10, sticky="")
 
-        # fill color pick frame
         self.fill_color_pick_frame = customtkinter.CTkFrame(master=self.color_frame, width=100, height=25)
         self.fill_color_pick_frame.configure(fg_color=("black"))
 
@@ -185,7 +167,6 @@ class App(customtkinter.CTk):
         self.fill_color_pick_frame.bind('<Button-1>', fill_color_pick)
         self.fill_color_pick_frame.grid(row=3, column=3, padx=(10, 10), pady=(10, 10), sticky="nsew")
 
-        # back color pick frame
         self.back_color_pick_frame = customtkinter.CTkFrame(master=self.color_frame, width=100, height=25)
         self.back_color_pick_frame.configure(fg_color=("white"))
 
