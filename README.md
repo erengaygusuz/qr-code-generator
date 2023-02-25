@@ -17,7 +17,7 @@ You can see a picture about this at below.
 
 ## Tools
 
-* PyCharm Community Edition 2022.2.3 (To write codes and generate cards)
+* PyCharm Community Edition 2022.2.3 (IDE)
 * qrcode package (To generate qr codes)
 * custom tkinter (To create user interface)
 
